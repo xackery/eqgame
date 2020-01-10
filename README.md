@@ -1,0 +1,2 @@
+# eqgame
+Everquest Game Client
