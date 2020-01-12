@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     public InputField ChatBox;
 
+    bool isChatBoxRecentlyDeactivated;
     int maxMessages = 25;
 
 
@@ -25,14 +26,30 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ChatBox.text != "" && Input.GetKeyDown(KeyCode.Return)) {
+
+        if (!isChatBoxRecentlyDeactivated && Input.GetKeyDown(KeyCode.Return) && !ChatBox.isFocused) {
+            ChatBox.ActivateInputField();
+            //ChatBox.Select();
+            return;
+        }
+        if (isChatBoxRecentlyDeactivated) isChatBoxRecentlyDeactivated = false;
+    }
+
+    public void OnChatMessage() 
+    {
+        if (ChatBox.text != "") {
             SendMessageToChat(ChatBox.text);    
             ChatBox.text = "";
+            ChatBox.DeactivateInputField();
+            isChatBoxRecentlyDeactivated = true;
+            return;
+        }
+        if (ChatBox.text == "") {
+            ChatBox.DeactivateInputField();
+            isChatBoxRecentlyDeactivated = true;
+            return;
         }
 
-        if (!ChatBox.isFocused && Input.GetKeyDown(KeyCode.Space)) {
-            SendMessageToChat("You pressed space");
-        }
     }
 
     public void SendMessageToChat(string text) 
